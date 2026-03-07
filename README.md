@@ -22,7 +22,6 @@ Tested on the highly volatile `rgbd_dataset_freiburg2_pioneer_slam3` dataset.
 ## Project Structure
 * `main.py`: Main execution loop, data synchronization, and system integration.
 * `tracker.py`: The core algorithmic engine (Feature extraction, RANSAC + EPnP, Gauss-Newton optimization).
-* `tune_slam.py`: Custom Auto-Tuning script to automate grid-search for optimal scale and RANSAC thresholds.
 * `viewer.py`: Real-time 3D OpenGL rendering using Pangolin.
 * `config.py`: Centralized configuration for camera intrinsics and heuristic parameters.
 
