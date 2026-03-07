@@ -205,3 +205,9 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# Ignore heavy dataset folders
+VO_dataset_SLAM_HW3/
+rgbd_dataset_freiburg2_pioneer_slam3/
+*.png
+*.jpg
