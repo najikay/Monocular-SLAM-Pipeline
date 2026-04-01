@@ -32,25 +32,29 @@ The codebase follows a clean, modular Object-Oriented design:
 * `src/dataset.py` - Ground Truth parsing and RGB-D temporal association.
 * `src/tune_slam.py` - Headless auto-tuning script to optimize Scale and RANSAC thresholds.
 
-## 💻 Installation & Usage
+## Installation & Usage
 
 1. **Clone the repository:**
    ```bash
    git clone [https://github.com/najikay/Monocular-SLAM-Pipeline.git](https://github.com/najikay/Monocular-SLAM-Pipeline.git)
    cd Monocular-SLAM-Pipeline
-Install dependencies:
+   ```
 
-Bash
-pip install -r requirements.txt
-Dataset Setup:
-Download the TUM RGB-D freiburg2_pioneer_slam3 dataset and place it in the path defined in src/config.py.
+2. **Install dependencies:**
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-Run the Tracker:
+3. **Dataset Setup:**
+   Download the TUM RGB-D `freiburg2_pioneer_slam3` dataset and place it in the path defined in `src/config.py`.
 
-Bash
-cd src
-python main.py
-Academic Context
+4. **Run the Tracker:**
+   ```bash
+   cd src
+   python main.py
+   ```
+
+## Academic Context
 This project was developed as the final assignment for the "Navigation, Mapping, and Pose Estimation" course at the University of Haifa.
 
-Author: Naji Kayal
+**Author:** Naji Kayal
