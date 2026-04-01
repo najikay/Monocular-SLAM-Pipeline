@@ -2,7 +2,7 @@
 
 A robust, Pure Visual Odometry (VO) and SLAM pipeline built from scratch in Python. This system estimates camera trajectory and reconstructs a 3D Sparse Point Cloud environment relying **strictly on visual data** (RGB-D) without the use of IMU sensors, designed to handle aggressive camera motion and motion blur.
 
-![SLAM Demo](assets/demo.png)
+![SLAM Demo](assets/demo_1.png)
 *(Screenshot of the Pangolin 3D viewer showing the estimated green trajectory, red ground truth, and the triangulated white point cloud).*
 
 ## Key Features & Algorithmic Design
