@@ -1,32 +1,55 @@
-# Pure Visual Odometry (VO) SLAM Pipeline
+# Visual Odometry & 3D Reconstruction (Pure SLAM)
 
-![gif-video](https://github.com/user-attachments/assets/8a0b35fb-60c6-498a-b82b-70fbd3fc0682)
+A robust, Pure Visual Odometry (VO) and SLAM pipeline built from scratch in Python. This system estimates camera trajectory and reconstructs a 3D Sparse Point Cloud environment relying **strictly on visual data** (RGB-D) without the use of IMU sensors, designed to handle aggressive camera motion and motion blur.
 
-A monocular Simultaneous Localization and Mapping (SLAM) system built entirely from scratch in Python. This project implements a Pure Visual Odometry pipeline capable of handling challenging environments with severe camera shake and motion blur, achieving a highly accurate trajectory without the use of IMU or external inertial sensors.
+![SLAM Demo](assets/demo.png)
+*(Screenshot of the Pangolin 3D viewer showing the estimated green trajectory, red ground truth, and the triangulated white point cloud).*
 
-## Technical Highlights
-* **Architecture:** Implements a continuous "Time Machine" (sliding window) tracking loop to recover from severe motion blur and track loss.
-* **Frontend:** Extracts and matches ORB keypoints using Lowe's Ratio Test. Pose estimation is calculated via the EPnP algorithm wrapped in an adaptive RANSAC filter.
-* **Optimization:** Custom-built non-linear Gauss-Newton optimization minimizes Reprojection Error to finely tune camera poses.
-* **Loop Closure:** Detects previously visited locations using spatial distance thresholds and visual descriptor verification to correct accumulated scale drift.
+##  Key Features & Algorithmic Design
 
-## Performance & Results
-Tested on the highly volatile `rgbd_dataset_freiburg2_pioneer_slam3` dataset.
+* **Decoupled Keyframe Mapping:** Tracking and Mapping are separated. 3D triangulation only occurs between temporally distant Keyframes (Baseline > 20cm) to prevent epipolar geometric collapse (the "ray" effect) during pure camera rotation.
+* **Epipolar Triangulation:** 3D environment generation using mathematical triangulation rather than relying on raw depth sensor mapping.
+* **Sub-Pixel Feature Refinement:** Extracts ORB keypoints and refines them to sub-pixel accuracy (`cv2.cornerSubPix`) for highly stable tracking.
+* **Reprojection Error Map Filtering:** A rigorous map-cleaning mechanism. 3D points are reprojected back onto their source 2D camera planes; only points with a reprojection error of `< 2.0 pixels` survive, resulting in a crisp, noise-free point cloud.
+* **Non-Linear Optimization:** Implements custom Gauss-Newton optimization over EPnP + RANSAC inliers to minimize reprojection errors and refine the camera pose.
+* **Loop Closure Detection:** Spatial and temporal scanning combined with Bag-of-Words visual matching to detect circular path completions.
+* **SVD Trajectory Evaluation:** Evaluates drift using standard Singular Value Decomposition (SVD) to align the estimated path with Ground Truth, calculating the Absolute Trajectory Error (ATE).
 
-* **Total Ground Truth Distance:** 18.80 meters
-* **Total Estimated Distance:** 19.43 meters
-* **Absolute Trajectory Error (ATE):** 0.4238 meters
+##  Performance Metrics
+Tested on the highly volatile TUM dataset (`freiburg2_pioneer_slam3`), the system achieved excellent accuracy for a pure VO pipeline lacking Global Bundle Adjustment:
 
-*(ATE calculated via SVD alignment)*
+* **Estimated Distance:** 20.09 meters
+* **Ground Truth Distance:** 18.80 meters
+* **Absolute Trajectory Error (ATE):** `0.3399 meters` (~1.8% drift rate)
 
-## Project Structure
-* `main.py`: Main execution loop, data synchronization, and system integration.
-* `tracker.py`: The core algorithmic engine (Feature extraction, RANSAC + EPnP, Gauss-Newton optimization).
-* `viewer.py`: Real-time 3D OpenGL rendering using Pangolin.
-* `config.py`: Centralized configuration for camera intrinsics and heuristic parameters.
+##  Project Structure
 
-## Running the Project
-1. Clone the repository.
-2. Ensure you have the required dependencies (`opencv-python`, `numpy`, `pypangolin`).
-3. Download the TUM RGB-D `freiburg2_pioneer_slam3` dataset and update the `DATASET_PATH` inside `config.py`.
-4. Run `python3 main.py` to initialize the tracking loop and real-time 3D viewer.
+The codebase follows a clean, modular Object-Oriented design:
+* `src/main.py` - Main event loop, dataset synchronization, and tracking execution.
+* `src/tracker.py` - The algorithmic core (ORB, EPnP, Gauss-Newton, Triangulation, Loop Closure).
+* `src/viewer.py` - Real-time 3D OpenGL rendering using Pangolin.
+* `src/map.py`, `src/frame.py`, `src/point.py` - Data structures managing spatial history and the global map.
+* `src/dataset.py` - Ground Truth parsing and RGB-D temporal association.
+* `src/tune_slam.py` - Headless auto-tuning script to optimize Scale and RANSAC thresholds.
+
+##  Installation & Usage
+
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/najikay/Monocular-SLAM-Pipeline.git
+   cd Monocular-SLAM-Pipeline
+
+Install dependencies:
+pip install -r requirements.txt
+
+Dataset Setup:
+Download the TUM RGB-D freiburg2_pioneer_slam3 dataset and place it in the path defined in src/config.py.
+
+Run the Tracker:
+cd src
+python main.py
+
+Academic Context
+This project was developed as the final assignment for the "Navigation, Mapping, and Pose Estimation" course at the University of Haifa.
+
+Author: Naji Kayal
